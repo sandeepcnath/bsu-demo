@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BSU-Infra</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#eef2f5;--panel:#fff;--ink:#12263a;--mute:#5d6f80;--line:#d3dde5;--blue:#1f5fa8;--amber:#b87f00;--green:#23744f;--red:#b3382c;--tint:#e4edf6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a25;--panel:#172536;--ink:#e6eef5;--mute:#93a6b8;--line:#2a3e53;--blue:#6aa7ea;--amber:#e6b23a;--green:#52b887;--red:#ef7d70;--tint:#1d3148}}
+:root[data-theme="dark"]{--bg:#0f1a25;--panel:#172536;--ink:#e6eef5;--mute:#93a6b8;--line:#2a3e53;--blue:#6aa7ea;--amber:#e6b23a;--green:#52b887;--red:#ef7d70;--tint:#1d3148}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--blue)}
+header{background:var(--ink);color:var(--bg);padding:12px 20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+header a.brand{color:inherit;text-decoration:none;font-weight:700;font-size:18px;letter-spacing:.2px}
+header .sp{flex:1}
+header label{font-size:13px;opacity:.8}
+select,input,textarea{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%}
+header select{width:auto;background:transparent;color:inherit;border-color:rgba(255,255,255,.35)}
+header select option{color:#12263a}
+main{max-width:1060px;margin:0 auto;padding:22px 20px 60px}
+h1{font-size:26px;margin:4px 0 4px}h2{font-size:17px;margin:0}
+.crumb{font-size:13px;color:var(--mute);margin-bottom:6px}.crumb a{color:var(--mute)}
+.sub{color:var(--mute);margin:0 0 18px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:1px solid var(--line);background:var(--panel);border-radius:8px;margin:16px 0 26px}
+.stat{padding:16px 18px;border-left:1px solid var(--line)}.stat:first-child{border-left:0}
+.stat b{display:block;font-size:34px;line-height:1.1}.stat span{color:var(--mute);font-size:13px}.stat small{display:block;font-size:12px;margin-top:2px}
+.sec{background:var(--panel);border:1px solid var(--line);border-radius:8px;margin-bottom:22px;overflow:hidden}
+.sh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--tint)}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{text-align:left;padding:10px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;color:var(--mute);font-weight:500}tr:last-child td{border-bottom:0}
+.empty{padding:20px 16px;color:var(--mute)}
+.badge{display:inline-block;font-size:12px;padding:1px 9px;border-radius:99px;border:1px solid currentColor;white-space:nowrap}
+.Proposed{color:var(--amber)}.Ongoing{color:var(--blue)}.Completed{color:var(--green)}.On-hold{color:var(--mute)}.late{color:var(--red)}
+button,.btn{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--blue);background:var(--blue);color:#fff;padding:6px 13px;text-decoration:none;display:inline-block}
+button.pri{color:light-dark(#fff,#0f1a25)}
+button.ghost{background:transparent;color:var(--blue)}button.danger{background:transparent;color:var(--red);border-color:var(--red)}
+button.sm{padding:2px 9px;font-size:13px}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ro{background:var(--tint);border:1px solid var(--line);border-radius:6px;padding:6px 12px;font-size:13px;margin-bottom:14px;color:var(--mute)}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;padding:14px 16px}.kv span{display:block;font-size:12px;color:var(--mute)}
+dialog{border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);width:min(480px,94vw);padding:20px}
+dialog::backdrop{background:rgba(10,20,30,.5)}
+.f{margin-bottom:12px}.f label{display:block;font-size:13px;color:var(--mute);margin-bottom:3px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+/* modern layer */
+.tap{cursor:pointer;transition:box-shadow .15s,transform .15s}.tap:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(16,40,70,.14)}
+.stat.on{outline:2px solid var(--blue);outline-offset:0}
+.card{cursor:pointer}
+/* modes and palettes */
+:root{color-scheme:light dark}:root[data-theme="light"]{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}
+:root[data-palette="forest"]{--blue:light-dark(#1f7a55,#5fcf9b);--tint:light-dark(#e2f1ea,#17332a);--bg:light-dark(#eef4f0,#0e1b16);--h1:#0c2a1f;--h2:#1f7a55}
+:root[data-palette="sunset"]{--blue:light-dark(#c2410c,#fb923c);--tint:light-dark(#fdebdc,#3a2214);--bg:light-dark(#f7f1ec,#1a130e);--h1:#3a1708;--h2:#c2410c}
+:root[data-palette="violet"]{--blue:light-dark(#6d3fd1,#a98bff);--tint:light-dark(#ece6fa,#241a3d);--bg:light-dark(#f1eff8,#14111f);--h1:#1d1240;--h2:#6d3fd1}
+:root[data-palette="rose"]{--blue:light-dark(#be185d,#f472b6);--tint:light-dark(#fce7f1,#3a1727);--bg:light-dark(#f8eff3,#1c1117);--h1:#3b0a24;--h2:#be185d}
+:root[data-palette="slate"]{--blue:light-dark(#334155,#cbd5e1);--tint:light-dark(#e8ecf0,#222c38);--bg:light-dark(#f1f3f5,#12161b);--h1:#0f172a;--h2:#475569}
+header button{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:99px;padding:5px 14px}
+header #pal{margin-right:2px}
+body{font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:-.005em}
+header{position:sticky;top:0;z-index:5;background:linear-gradient(120deg,var(--h1,#0f2236),var(--h2,#1f5fa8));color:#fff;box-shadow:0 2px 14px rgba(10,30,60,.25);padding:14px 24px}
+header a.brand::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;background:#7cc0ff;margin-right:9px}
+header select{background:rgba(255,255,255,.14);border-radius:99px;padding:5px 12px;border-color:rgba(255,255,255,.3)}
+h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
+.stats{border:0;background:none;gap:14px}
+.stat,.stat:first-child{border:1px solid var(--line);background:var(--panel);border-radius:14px;position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(16,40,70,.06),0 8px 20px rgba(16,40,70,.05)}
+.stat::before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:var(--blue)}
+.stat:nth-child(2)::before{background:var(--amber)}.stat:nth-child(4)::before{background:var(--green)}
+.stat b{font-size:38px;font-weight:700;letter-spacing:-.03em}
+.sec{border-radius:14px;box-shadow:0 1px 2px rgba(16,40,70,.06),0 8px 20px rgba(16,40,70,.05)}
+.sh{background:transparent}
+tr:hover td{background:var(--tint)}
+.badge{border-color:transparent;font-weight:500;background:color-mix(in srgb,currentColor 13%,transparent)}
+button,.btn{border-radius:10px;font-weight:500}
+dialog{border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.vb{display:flex;justify-content:flex-end;margin-bottom:8px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:99px;overflow:hidden;background:var(--panel)}
+.seg button{background:transparent;color:var(--mute);border:0;border-radius:0;padding:5px 16px}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;padding:16px}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--bg);display:flex;flex-direction:column;gap:6px;transition:box-shadow .15s,transform .15s}
+.card:hover{box-shadow:0 8px 22px rgba(16,40,70,.12);transform:translateY(-2px)}
+.card .ct{font-weight:600;font-size:16px;margin-bottom:2px}
+.card .cr{display:flex;justify-content:space-between;gap:12px;font-size:13px;text-align:right}
+.card .cr span:first-child{color:var(--mute);text-align:left;flex:none}
+.card .ca{margin-top:auto;padding-top:8px}
+@media (prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+</style>
+</head>
+<body>
+<header>
+  <a class="brand" id="home" href="#/">BSU-Infra</a>
+  <span class="sp"></span>
+  <select id="pal" aria-label="Color theme"><option value="">Blueprint</option><option value="forest">Forest</option><option value="sunset">Sunset</option><option value="violet">Violet</option><option value="rose">Rose</option><option value="slate">Slate</option></select>
+  <button id="mode" type="button" aria-label="Switch light or dark mode">Dark mode</button>
+  <span id="rolebox"><label for="role">Viewing as </label><select id="role"><option value="admin">Admin</option><option value="user">User</option><option value="viewer">Read-only</option></select></span>
+</header>
+<main id="app"></main>
+<dialog id="dlg"><h2 id="dt"></h2><div id="df" style="margin:14px 0"></div><div class="row" style="justify-content:flex-end"><button class="ghost" id="dc">Cancel</button><button class="pri" id="ds">Save</button></div></dialog>
+<div id="toast"></div>
+<script>
+const KEY='bsu-infra-v1';
+const TYPES=['New building','Renovation','Preventive maintenance','Utilities','Other'];
+const STATUS=['Proposed','Ongoing','Completed','On hold'];
+const CATS=['Drawing','Contract','Report','Permit','Maintenance log','Other'];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9);
+const today=()=>new Date().toISOString().slice(0,10);
+let S,RO=false,ROLE='admin';
+
+function seed(){
+  const c1='c1',c2='c2',c3='c3';
+  return{campuses:[
+    {id:c1,name:'Main Campus',city:'City Centre',notes:'Administration, engineering and library blocks.'},
+    {id:c2,name:'North Campus',city:'Northern District',notes:'Sciences and student housing.'},
+    {id:c3,name:'Medical Campus',city:'Riverside',notes:'Teaching hospital and nursing college.'}],
+  projects:[
+    {id:'p1',campusId:c1,name:'Engineering block extension',type:'New building',status:'Proposed',budget:12500000,start:'2027-02-01',end:'2028-06-30',desc:'Four-storey extension with 12 labs.'},
+    {id:'p2',campusId:c1,name:'Library HVAC replacement',type:'Renovation',status:'Ongoing',budget:2300000,start:'2026-07-01',end:'2026-12-15',desc:'Replace chillers and air handling units.'},
+    {id:'p3',campusId:c1,name:'Quarterly lift servicing',type:'Preventive maintenance',status:'Ongoing',budget:85000,start:'2026-10-01',end:'2026-10-31',desc:'All passenger and goods lifts.'},
+    {id:'p4',campusId:c2,name:'Student housing block C',type:'New building',status:'Proposed',budget:18000000,start:'2027-05-01',end:'2029-01-31',desc:'320-bed residence.'},
+    {id:'p5',campusId:c2,name:'Fire system inspection',type:'Preventive maintenance',status:'Ongoing',budget:60000,start:'2026-08-01',end:'2026-09-30',desc:'Annual alarm and sprinkler inspection.'},
+    {id:'p6',campusId:c3,name:'Simulation centre',type:'New building',status:'Ongoing',budget:9400000,start:'2026-03-01',end:'2027-09-30',desc:'Clinical simulation labs.'}],
+  docs:[
+    {id:'d1',campusId:c1,projectId:null,title:'Campus master plan 2026-2035',cat:'Report',url:'',note:'Approved by the board.',date:'2026-01-12'},
+    {id:'d2',campusId:c1,projectId:'p1',title:'Concept drawings v2',cat:'Drawing',url:'',note:'Pending structural review.',date:'2026-09-03'},
+    {id:'d3',campusId:c1,projectId:'p2',title:'HVAC contract',cat:'Contract',url:'',note:'',date:'2026-06-20'}],
+  role:'admin'};
+}
+function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S||!S.campuses)S=seed()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)}
+
+const canAdd=()=>ROLE!=='viewer', canDel=()=>ROLE==='admin';
+const href=p=>'#/'+p+(RO?'?ro=1':'');
+const money=n=>n?Number(n).toLocaleString():'-';
+const cname=id=>(S.campuses.find(c=>c.id===id)||{}).name||'';
+const badge=s=>`<span class="badge ${s.replace(' ','-')}">${esc(s)}</span>`;
+const isLate=p=>p.status!=='Completed'&&p.end&&p.end<today();
+
+function route(){
+  const [path,q]=(location.hash.slice(1)||'/').split('?');
+  RO=q==='ro=1';ROLE=RO?'viewer':(S.role||'admin');
+  $('#rolebox').style.display=RO?'none':'';$('#role').value=ROLE;$('#home').href=href('');
+  const p=path.split('/').filter(Boolean);
+  let h=(RO?'<div class="ro">You are viewing a shared read-only link.</div>':ROLE==='viewer'?'<div class="ro">Read-only access: you can browse but not change anything.</div>':'');
+  if(p[0]==='campus'&&S.campuses.some(c=>c.id===p[1]))h+=campusPage(p[1]);
+  else if(p[0]==='project'&&S.projects.some(x=>x.id===p[1]))h+=projectPage(p[1]);
+  else h+=overview();
+  $('#app').innerHTML=viewBar()+h;if(S.view==='cards')toCards();
+  document.title='BSU-Infra';
+}
+
+function overview(){
+  const P=S.projects,pm=P.filter(p=>p.type==='Preventive maintenance'&&p.status!=='Completed');
+  const prop=P.filter(p=>p.type==='New building'&&p.status==='Proposed');
+  const ong=P.filter(p=>p.status==='Ongoing'), late=pm.filter(isLate).length;
+  const rows=S.campuses.map(c=>{const cp=P.filter(p=>p.campusId===c.id);
+    return `<tr><td><a href="${href('campus/'+c.id)}"><b>${esc(c.name)}</b></a><br><span style="color:var(--mute)">${esc(c.city)}</span></td>
+    <td>${cp.length}</td><td>${cp.filter(p=>p.type==='New building'&&p.status==='Proposed').length}</td><td>${cp.filter(p=>p.status==='Ongoing').length}</td>
+    <td>${cp.filter(p=>p.type==='Preventive maintenance'&&p.status!=='Completed').length}</td><td>${S.docs.filter(d=>d.campusId===c.id).length}</td></tr>`}).join('');
+  const up=pm.slice().sort((a,b)=>(a.end||'').localeCompare(b.end||'')).slice(0,5).map(p=>
+    `<tr><td><a href="${href('project/'+p.id)}">${esc(p.name)}</a></td><td>${esc(cname(p.campusId))}</td><td>${esc(p.end||'-')} ${isLate(p)?'<span class="badge late">Overdue</span>':''}</td></tr>`).join('');
+  return `<h1>Infrastructure overview</h1><p class="sub">All campuses at a glance. Select a card to see its details.</p>${canAdd()?'<div class="row" style="margin-bottom:14px"><button class="pri" onclick="addBuilding()">Add building</button><button class="ghost" onclick="addDocHome()">Add document</button></div>':''}
+  <div class="stats">
+   <div class="stat tap${FOCUS==='campuses'?' on':''}" tabindex="0" role="button" onclick="setFocus('campuses')" onkeydown="if(event.key==='Enter')setFocus('campuses')"><b>${S.campuses.length}</b><span>Campuses</span></div>
+   <div class="stat tap${FOCUS==='proposed'?' on':''}" tabindex="0" role="button" onclick="setFocus('proposed')" onkeydown="if(event.key==='Enter')setFocus('proposed')"><b>${prop.length}</b><span>Proposed buildings</span></div>
+   <div class="stat tap${FOCUS==='ongoing'?' on':''}" tabindex="0" role="button" onclick="setFocus('ongoing')" onkeydown="if(event.key==='Enter')setFocus('ongoing')"><b>${ong.length}</b><span>Ongoing projects</span></div>
+   <div class="stat tap${FOCUS==='maintenance'?' on':''}" tabindex="0" role="button" onclick="setFocus('maintenance')" onkeydown="if(event.key==='Enter')setFocus('maintenance')"><b>${pm.length}</b><span>Preventive maintenance open</span><small class="${late?'late':''}">${late} overdue</small></div>
+  </div>
+  ${focusPanel(prop,ong,pm)}<div class="sec"><div class="sh"><h2>Campuses</h2>${canAdd()?'<button class="pri" onclick="addCampus()">Add campus</button>':''}</div>
+  ${S.campuses.length?`<div class="tw"><table><tr><th>Campus</th><th>Projects</th><th>Proposed buildings</th><th>Ongoing</th><th>Maintenance</th><th>Documents</th></tr>${rows}</table></div>`:'<div class="empty">No campuses yet. Add one to start.</div>'}</div>
+  <div class="sec"><div class="sh"><h2>Preventive maintenance due next</h2></div>
+  ${up?`<div class="tw"><table><tr><th>Task</th><th>Campus</th><th>Due</th></tr>${up}</table></div>`:'<div class="empty">No open maintenance tasks.</div>'}</div>`;
+}
+
+function projTable(list,showCampus){
+  if(!list.length)return '<div class="empty">No projects yet.</div>';
+  return `<div class="tw"><table><tr><th>Project</th>${showCampus?'<th>Campus</th>':''}<th>Type</th><th>Status</th><th>Budget</th><th>Dates</th></tr>`+
+  list.map(p=>`<tr><td><a href="${href('project/'+p.id)}"><b>${esc(p.name)}</b></a></td>${showCampus?`<td>${esc(cname(p.campusId))}</td>`:''}<td>${esc(p.type)}</td><td>${badge(p.status)}${isLate(p)?' <span class="badge late">Overdue</span>':''}</td><td>${money(p.budget)}</td><td>${esc(p.start||'')} to ${esc(p.end||'')}</td></tr>`).join('')+'</table></div>';
+}
+function docTable(list){
+  if(!list.length)return '<div class="empty">No documents yet.</div>';
+  return `<div class="tw"><table><tr><th>Document</th><th>Category</th><th>Added</th><th></th></tr>`+
+  list.map(d=>{const pr=S.projects.find(x=>x.id===d.projectId);
+   return `<tr><td>${d.url?`<a href="${esc(d.url)}" target="_blank" rel="noopener noreferrer"><b>${esc(d.title)}</b></a>`:`<b>${esc(d.title)}</b>`}${pr?`<br><span style="color:var(--mute)">Project: ${esc(pr.name)}</span>`:''}${d.note?`<br><span style="color:var(--mute)">${esc(d.note)}</span>`:''}</td>
+   <td>${esc(d.cat)}</td><td>${esc(d.date)}</td><td>${canDel()?`<button class="danger sm" onclick="delDoc('${d.id}')">Delete</button>`:''}</td></tr>`}).join('')+'</table></div>';
+}
+function shareBtn(){return `<button class="ghost" onclick="share()">Copy read-only link</button>`}
+
+function campusPage(id){
+  const c=S.campuses.find(x=>x.id===id),P=S.projects.filter(p=>p.campusId===id),D=S.docs.filter(d=>d.campusId===id);
+  return `<div class="crumb"><a href="${href('')}">Overview</a> / ${esc(c.name)}</div>
+  <div class="row" style="justify-content:space-between"><h1>${esc(c.name)}</h1><div class="row">${shareBtn()}${canAdd()?`<button class="ghost" onclick="editCampus('${id}')">Edit</button>`:''}${canDel()?`<button class="danger" onclick="delCampus('${id}')">Delete</button>`:''}</div></div>
+  <p class="sub">${esc(c.city)}${c.notes?' - '+esc(c.notes):''}</p>
+  <div class="sec"><div class="sh"><h2>Projects (${P.length})</h2>${canAdd()?`<button class="pri" onclick="addProject('${id}')">Add project</button>`:''}</div>${projTable(P,false)}</div>
+  <div class="sec"><div class="sh"><h2>Documents (${D.length})</h2>${canAdd()?`<button class="pri" onclick="addDoc('${id}',null)">Add document</button>`:''}</div>${docTable(D)}</div>`;
+}
+function projectPage(id){
+  const p=S.projects.find(x=>x.id===id),D=S.docs.filter(d=>d.projectId===id);
+  return `<div class="crumb"><a href="${href('')}">Overview</a> / <a href="${href('campus/'+p.campusId)}">${esc(cname(p.campusId))}</a> / ${esc(p.name)}</div>
+  <div class="row" style="justify-content:space-between"><h1>${esc(p.name)}</h1><div class="row">${shareBtn()}${canAdd()?`<button class="ghost" onclick="editProject('${id}')">Edit</button>`:''}${canDel()?`<button class="danger" onclick="delProject('${id}')">Delete</button>`:''}</div></div>
+  <p class="sub">${esc(p.desc||'')}</p>
+  <div class="sec"><div class="kv"><div><span>Status</span>${badge(p.status)}${isLate(p)?' <span class="badge late">Overdue</span>':''}</div><div><span>Type</span>${esc(p.type)}</div><div><span>Budget</span>${money(p.budget)}</div><div><span>Start</span>${esc(p.start||'-')}</div><div><span>End</span>${esc(p.end||'-')}</div></div></div>
+  <div class="sec"><div class="sh"><h2>Documents (${D.length})</h2>${canAdd()?`<button class="pri" onclick="addDoc('${p.campusId}','${id}')">Add document</button>`:''}</div>${docTable(D)}</div>`;
+}
+
+/* modal form */
+function form(title,fields,onSave){
+  $('#dt').textContent=title;
+  $('#df').innerHTML=fields.map(f=>{const v=esc(f.v==null?'':f.v);let i;
+    if(f.o)i=`<select id="f_${f.k}">${f.o.map(o=>`<option${o===f.v?' selected':''}>${esc(o)}</option>`).join('')}</select>`;
+    else if(f.t==='area')i=`<textarea id="f_${f.k}" rows="3">${v}</textarea>`;
+    else i=`<input id="f_${f.k}" type="${f.t||'text'}" value="${v}">`;
+    return `<div class="f"><label for="f_${f.k}">${f.l}</label>${i}</div>`}).join('');
+  $('#ds').onclick=()=>{const d={};fields.forEach(f=>d[f.k]=$('#f_'+f.k).value.trim());
+    const req=fields.find(f=>f.r&&!d[f.k]);if(req){toast(req.l+' is required');return}
+    onSave(d);save();$('#dlg').close();route()};
+  $('#dc').onclick=()=>$('#dlg').close();
+  $('#dlg').showModal();
+}
+function addCampus(){form('Add campus',[{k:'name',l:'Campus name',r:1},{k:'city',l:'Location'},{k:'notes',l:'Notes',t:'area'}],d=>S.campuses.push({id:uid(),...d}))}
+function editCampus(id){const c=S.campuses.find(x=>x.id===id);form('Edit campus',[{k:'name',l:'Campus name',r:1,v:c.name},{k:'city',l:'Location',v:c.city},{k:'notes',l:'Notes',t:'area',v:c.notes}],d=>Object.assign(c,d))}
+const pf=p=>[{k:'name',l:'Project name',r:1,v:p.name},{k:'type',l:'Type',o:TYPES,v:p.type},{k:'status',l:'Status',o:STATUS,v:p.status},{k:'budget',l:'Budget',t:'number',v:p.budget},{k:'start',l:'Start date',t:'date',v:p.start},{k:'end',l:'End date',t:'date',v:p.end},{k:'desc',l:'Description',t:'area',v:p.desc}];
+function addProject(cid){form('Add project',pf({}),d=>{d.budget=+d.budget||0;S.projects.push({id:uid(),campusId:cid,...d})})}
+function editProject(id){const p=S.projects.find(x=>x.id===id);form('Edit project',pf(p),d=>{d.budget=+d.budget||0;Object.assign(p,d)})}
+function addDoc(cid,pid){form('Add document',[{k:'title',l:'Title',r:1},{k:'cat',l:'Category',o:CATS},{k:'url',l:'Link (optional)',t:'url'},{k:'note',l:'Note',t:'area'}],d=>S.docs.push({id:uid(),campusId:cid,projectId:pid,date:today(),...d}))}
+function delDoc(id){if(confirm('Delete this document?')){S.docs=S.docs.filter(d=>d.id!==id);save();route()}}
+function delProject(id){const p=S.projects.find(x=>x.id===id);if(confirm('Delete this project and its documents?')){S.docs=S.docs.filter(d=>d.projectId!==id);S.projects=S.projects.filter(x=>x.id!==id);save();location.hash=href('campus/'+p.campusId)}}
+function delCampus(id){if(confirm('Delete this campus with all its projects and documents?')){const ids=S.projects.filter(p=>p.campusId===id).map(p=>p.id);S.docs=S.docs.filter(d=>d.campusId!==id&&!ids.includes(d.projectId));S.projects=S.projects.filter(p=>p.campusId!==id);S.campuses=S.campuses.filter(c=>c.id!==id);save();location.hash=href('')}}
+function share(){const u=location.href.split('#')[0]+'#'+(location.hash.slice(1)||'/').split('?')[0]+'?ro=1';
+  (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>toast('Read-only link copied'),()=>prompt('Copy this read-only link',u))}
+
+let FOCUS='';
+function setFocus(k){FOCUS=FOCUS===k?'':k;route()}
+function focusPanel(prop,ong,pm){
+  if(!FOCUS)return '';
+  const M={campuses:['Campuses',S.campuses],proposed:['Proposed buildings',prop],ongoing:['Ongoing projects',ong],maintenance:['Preventive maintenance open',pm]},[t,l]=M[FOCUS];
+  const body=FOCUS==='campuses'?(l.length?'<div class="tw"><table><tr><th>Campus</th><th>Location</th><th>Notes</th><th>Projects</th><th>Documents</th></tr>'+l.map(c=>`<tr><td><a href="${href('campus/'+c.id)}"><b>${esc(c.name)}</b></a></td><td>${esc(c.city)}</td><td>${esc(c.notes)}</td><td>${S.projects.filter(p=>p.campusId===c.id).length}</td><td>${S.docs.filter(d=>d.campusId===c.id).length}</td></tr>`).join('')+'</table></div>':'<div class="empty">No campuses yet.</div>'):projTable(l,true);
+  return `<div class="sec"><div class="sh"><h2>${t} (${l.length})</h2><button class="ghost sm" onclick="setFocus('${FOCUS}')">Close</button></div>${body}</div>`;
+}
+function addBuilding(){
+  if(!S.campuses.length){toast('Add a campus first');return}
+  form('Add building',[{k:'campus',l:'Campus',o:S.campuses.map(c=>c.name)},{k:'name',l:'Building name',r:1},{k:'status',l:'Status',o:STATUS,v:'Proposed'},{k:'budget',l:'Budget',t:'number'},{k:'start',l:'Start date',t:'date'},{k:'end',l:'End date',t:'date'},{k:'desc',l:'Description',t:'area'}],d=>{const c=S.campuses.find(x=>x.name===d.campus);S.projects.push({id:uid(),campusId:c.id,name:d.name,type:'New building',status:d.status,budget:+d.budget||0,start:d.start,end:d.end,desc:d.desc})})
+}
+function addDocHome(){
+  if(!S.campuses.length){toast('Add a campus first');return}
+  const T=[];S.campuses.forEach(c=>{T.push({l:'Campus: '+c.name,c:c.id,p:null});S.projects.filter(p=>p.campusId===c.id).forEach(p=>T.push({l:'Project: '+p.name+' ('+c.name+')',c:c.id,p:p.id}))});
+  form('Add document',[{k:'to',l:'Attach to',o:T.map(t=>t.l)},{k:'title',l:'Title',r:1},{k:'cat',l:'Category',o:CATS},{k:'url',l:'Link (optional)',t:'url'},{k:'note',l:'Note',t:'area'}],d=>{const t=T.find(x=>x.l===d.to);S.docs.push({id:uid(),campusId:t.c,projectId:t.p,title:d.title,cat:d.cat,url:d.url,note:d.note,date:today()})})
+}
+document.addEventListener('click',e=>{const c=e.target.closest('.card');if(c&&!e.target.closest('a,button')){const a=c.querySelector('.ct a');if(a)a.click()}});
+function viewBar(){const v=S.view==='cards'?'cards':'table';return `<div class="vb"><div class="seg" role="group" aria-label="List view"><button class="${v==='table'?'on':''}" onclick="setView('table')">Table</button><button class="${v==='cards'?'on':''}" onclick="setView('cards')">Cards</button></div></div>`}
+function setView(v){S.view=v;save();route()}
+function toCards(){
+  document.querySelectorAll('#app table').forEach(t=>{
+    const heads=[...t.rows[0].cells].map(c=>c.textContent),box=document.createElement('div');box.className='cards';
+    [...t.rows].slice(1).forEach(r=>{const c=[...r.cells];let h='<div class="card"><div class="ct">'+c[0].innerHTML+'</div>',act='';
+      c.slice(1).forEach((td,i)=>{const hd=heads[i+1],v=td.innerHTML.trim();if(!v)return;if(!hd)act+=v;else h+='<div class="cr"><span>'+hd+'</span><span>'+v+'</span></div>'});
+      box.insertAdjacentHTML('beforeend',h+(act?'<div class="ca">'+act+'</div>':'')+'</div>')});
+    t.closest('.tw').replaceWith(box)})
+}
+$('#role').onchange=e=>{S.role=e.target.value;save();route()};
+window.addEventListener('hashchange',route);
+const TK='bsu-infra-theme';let TH={mode:'auto',pal:''};
+try{TH=Object.assign(TH,JSON.parse(localStorage.getItem(TK)))}catch(e){}
+function applyTheme(){const r=document.documentElement;
+  if(TH.mode==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',TH.mode);
+  if(TH.pal)r.setAttribute('data-palette',TH.pal);else r.removeAttribute('data-palette');
+  const dark=TH.mode==='dark'||(TH.mode==='auto'&&matchMedia('(prefers-color-scheme:dark)').matches);
+  $('#pal').value=TH.pal;$('#mode').textContent=dark?'Light mode':'Dark mode';$('#mode').dataset.dark=dark?'1':'';
+  try{localStorage.setItem(TK,JSON.stringify(TH))}catch(e){}}
+$('#mode').onclick=()=>{TH.mode=$('#mode').dataset.dark?'light':'dark';applyTheme()};
+$('#pal').onchange=e=>{TH.pal=e.target.value;applyTheme()};
+applyTheme();
+load();route();
+</script>
+</body>
+</html>
